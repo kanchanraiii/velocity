@@ -4,4 +4,10 @@ spring:
 server:
   port: 9000
 velocity:
-  user-service-url: http://localhost:8081
+  routes:
+    - path: /users
+      target: http://localhost:8081
+    - path: /order
+      target: http://localhost:8082
+
+

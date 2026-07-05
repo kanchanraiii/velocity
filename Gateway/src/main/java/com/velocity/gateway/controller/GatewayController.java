@@ -4,6 +4,7 @@ import com.velocity.gateway.config.VelocityProperties;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 public class GatewayController {
@@ -18,8 +19,12 @@ public class GatewayController {
         this.properties=velocityProperties;
     }
 
-    @GetMapping("/users")
+    @GetMapping("/{*path})")
     public String getUsers() {
+
+        String path = request.getRequestURI();
+        System.out.println("Incoming Request: " + path);
+
         return webClient
                 .get()
                 .uri(properties.getUserServiceUrl()+"/users")
