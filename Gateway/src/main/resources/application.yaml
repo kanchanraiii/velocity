@@ -3,3 +3,5 @@ spring:
     name: Gateway
 server:
   port: 9000
+velocity:
+  user-service-url: http://localhost:8081
