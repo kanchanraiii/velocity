@@ -1,33 +1,25 @@
-package com.velocity.gateway.controller;
-
-import com.velocity.gateway.config.VelocityProperties;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.reactive.function.client.WebClient;
-import jakarta.servlet.http.HttpServletRequest;
-
 @RestController
 public class GatewayController {
 
     private final WebClient webClient;
+    private final RouteMatcher routeMatcher;
 
-    //injecting properties from app.yaml
-    private final VelocityProperties properties;
-
-    public GatewayController(WebClient webClient, VelocityProperties velocityProperties) {
+    public GatewayController(WebClient webClient,
+                             RouteMatcher routeMatcher) {
         this.webClient = webClient;
-        this.properties=velocityProperties;
+        this.routeMatcher = routeMatcher;
     }
 
-    @GetMapping("/{*path})")
-    public String getUsers() {
+    @GetMapping("/{*path}")
+    public String forward(HttpServletRequest request) {
 
         String path = request.getRequestURI();
-        System.out.println("Incoming Request: " + path);
+
+        Route route = routeMatcher.findRoute(path);
 
         return webClient
                 .get()
-                .uri(properties.getUserServiceUrl()+"/users")
+                .uri(route.getTarget() + path)
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
